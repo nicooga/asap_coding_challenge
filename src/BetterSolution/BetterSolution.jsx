@@ -1,8 +1,9 @@
+/* global Event */
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import debounce from 'lodash.debounce'
-import sortBy from 'lodash.sortBy'
+import sortBy from 'lodash.sortby'
 import scrollIntoView from 'scroll-into-view-if-needed'
 
 import doFetchSuggestions from '../fetchSuggestions'
@@ -23,10 +24,10 @@ const triggerFocus = element => {
   let event
 
   if ('createEvent' in document) {
-    event = document.createEvent('Event');
-    event.initEvent(eventType, bubbles, true);
+    event = document.createEvent('Event')
+    event.initEvent(eventType, bubbles, true)
   } else if ('Event' in window) {
-    event = new Event(eventType, { bubbles, cancelable: true });
+    event = new Event(eventType, { bubbles, cancelable: true })
   }
 
   element.focus()
@@ -103,11 +104,6 @@ const SuggestionsMessage = styled.div`
   text-align: center;
   padding: 16px;
 `
-
-const useDebouncedState = (initialValue, timeout) => {
-  const [value, setter] = useState(initialValue)
-  return [value, debounce(setter, timeout), setter]
-}
 
 const BetterSolution = ({ className }) => {
   const [filter, setFilter] = useState('')
@@ -188,9 +184,9 @@ const BetterSolution = ({ className }) => {
 
   const handleKeyDown = ev => {
     if (ev.key === 'ArrowDown') {
-      setFocusedSuggestionIndex(index => index >= suggestions.length - 1 ? index : index + 1 )
+      setFocusedSuggestionIndex(index => index >= suggestions.length - 1 ? index : index + 1)
     } else if (ev.key === 'ArrowUp') {
-      setFocusedSuggestionIndex(index => index <= 0 ? index : index - 1 )
+      setFocusedSuggestionIndex(index => index <= 0 ? index : index - 1)
     } else if (ev.key === 'Enter') {
       const selectedSuggestion = suggestions[focusedSuggestionIndex]
       selectedSuggestion && toggleOption(selectedSuggestion)
@@ -301,5 +297,7 @@ const BetterSolution = ({ className }) => {
 BetterSolution.propTypes = {
   className: PropTypes.string
 }
+
+BetterSolution.displayName = 'BetterSolution'
 
 export default BetterSolution

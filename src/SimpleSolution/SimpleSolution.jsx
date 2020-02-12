@@ -49,7 +49,7 @@ const SimpleSolution = _props => {
       try {
         const suggestions = await doFetchSuggestions(filter)
         setSuggestions(suggestions)
-      } catch(_error) { } // eslint-disable-line no-empty
+      } catch (_error) { } // eslint-disable-line no-empty
     }, SUGGESTIONS_DEBOUNCE_TIMEOUT)
   )
 

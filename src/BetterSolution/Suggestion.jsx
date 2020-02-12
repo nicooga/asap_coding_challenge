@@ -79,4 +79,6 @@ Suggestion.propTypes = {
   name: PropTypes.string.isRequired
 }
 
+Suggestion.displayName = 'Suggestion'
+
 export default Suggestion
