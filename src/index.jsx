@@ -21,6 +21,14 @@ const SolutionWrapper = styled.div`
   border: 1px solid black;
 `
 
+const BetterSolutionAlternateSize = styled(BetterSolution)`
+  width: 800px;
+`
+
+const BetterSolutionAlternateSize2 = styled(BetterSolution)`
+  width: 300px;
+`
+
 const App = _props => (
   <Root>
     <SolutionWrapper>
@@ -47,7 +55,15 @@ const App = _props => (
     </SolutionWrapper>
 
     <SolutionWrapper>
+      <p>
+        I think you are going to like this one. It adapts well to different sizes and all the problems listed above are solved.
+      </p>
+
       <BetterSolution />
+      <br />
+      <BetterSolutionAlternateSize />
+      <br />
+      <BetterSolutionAlternateSize2 />
     </SolutionWrapper>
   </Root>
 )

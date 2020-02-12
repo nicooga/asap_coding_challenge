@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import debounce from 'lodash.debounce'
 import sortBy from 'lodash.sortBy'
@@ -31,8 +32,6 @@ const triggerFocus = element => {
   element.focus()
   element.dispatchEvent(event)
 }
-
-const isVisible = elem => !!elem && !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length ) // source (2018-03-11): https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
 
 const InputRoot = styled.div`
   width: ${WIDTH};
@@ -86,11 +85,14 @@ const RealInput = styled.input`
 `
 
 const SuggestionsBox = styled.div`
+  position: absolute;
+  z-index: 1;
   width: 100%;
-  border: 1px solid lightgrey;
-  border-radius: 8px;
   max-height: 400px;
   overflow-y: auto;
+  background-color: white;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
 
   &:empty {
     display: none;
@@ -102,9 +104,14 @@ const SuggestionsMessage = styled.div`
   padding: 16px;
 `
 
-const BetterSolution = _props => {
+const useDebouncedState = (initialValue, timeout) => {
+  const [value, setter] = useState(initialValue)
+  return [value, debounce(setter, timeout), setter]
+}
+
+const BetterSolution = ({ className }) => {
   const [filter, setFilter] = useState('')
-  const [focused, setFocused] = useState(true)
+  const [focused, setFocused] = useState(false)
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(0)
@@ -128,7 +135,7 @@ const BetterSolution = _props => {
 
     document.addEventListener('click', outsideClickListener)
     return _ => document.removeEventListener('click', outsideClickListener)
-  }, [realInputRef])
+  }, [rootInputRef])
 
   const fetchSuggestions = useCallback(
     debounce(async (filter, retries = 3) => {
@@ -142,7 +149,7 @@ const BetterSolution = _props => {
         setFetching(false)
         setShowSuggestions(true)
         setFocusedSuggestionIndex(0)
-      } catch(response) {
+      } catch (_response) {
         if (retries > 0) {
           fetchSuggestions(filter, retries - 1)
         } else {
@@ -190,9 +197,10 @@ const BetterSolution = _props => {
     } else if (ev.key === 'Backspace' && filter === '') {
       unSelectLastOption()
     } else if (ev.key === 'Escape') {
-      setShowSuggestions(false)
-      setFilter('')
       realInputRef.current.blur()
+      setFilter('')
+      setFocused(false)
+      setShowSuggestions(false)
     }
   }
 
@@ -205,15 +213,11 @@ const BetterSolution = _props => {
   const onRealInputBlur = ev => {
     setFocused(false)
     setFilter('')
-  }
-
-  const onSuggestionChecked = city => {
-    toggleOption(city)
-    setFocused(true)
+    setShowSuggestions(false)
   }
 
   return (
-    <InputRoot ref={rootInputRef}>
+    <InputRoot ref={rootInputRef} className={className}>
       <Label>Choose your cities</Label>
       <InputWrapper onKeyDown={handleKeyDown}>
         <Input
@@ -253,9 +257,24 @@ const BetterSolution = _props => {
                 Please try again later.
               </SuggestionsMessage>
             )}
+            {!errored && !suggestions.length && !fetching && (
+              <SuggestionsMessage>
+                There are no results for your search
+              </SuggestionsMessage>
+            )}
             {!errored && !!suggestions.length && suggestions.map((s, index) => (
               <Suggestion
-                onChecked={_ => onSuggestionChecked(s)}
+                onMouseDown={ev => {
+                  // This is how we prevent real input from losing focus
+                  // Solving the focus loss was the worst part about building this component
+                  ev.preventDefault()
+                  triggerFocus(realInputRef.current)
+                }}
+                onClick={_ => {
+                  toggleOption(s)
+                  setFocusedSuggestionIndex(index)
+                  setShowSuggestions(true)
+                }}
                 checked={!!value[s.geonameid]}
                 focused={index === focusedSuggestionIndex}
                 key={s.geonameid}
@@ -264,20 +283,23 @@ const BetterSolution = _props => {
                 name={s.name}
                 ref={node => {
                   if (!node) { return }
-                  index === focusedSuggestionIndex && scrollIntoView(node, { scrollMode: 'if-neeed '})
+                  index === focusedSuggestionIndex && scrollIntoView(node, {
+                    scrollMode: 'if-neeed',
+                    block: 'nearest',
+                    inline: 'nearest'
+                  })
                 }}
               />
             ))}
-            {!errored && !suggestions.length && !fetching && (
-              <SuggestionsMessage>
-                There are no results for your search
-              </SuggestionsMessage>
-            )}
           </SuggestionsBox>
         )}
       </InputWrapper>
     </InputRoot>
   )
+}
+
+BetterSolution.propTypes = {
+  className: PropTypes.string
 }
 
 export default BetterSolution

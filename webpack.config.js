@@ -7,7 +7,7 @@ module.exports = {
   devtool: 'source-maps',
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Nicolas Oga',
+      title: 'Asap Coding Challenge - Nicolas Oga',
       template: 'src/index.html'
     })
   ],
@@ -56,6 +56,7 @@ module.exports = {
   },
   devServer: {
     contentBase: path.resolve(__dirname, 'dist'),
-    historyApiFallback: true
+    historyApiFallback: true,
+    host: '0.0.0.0'
   }
 }

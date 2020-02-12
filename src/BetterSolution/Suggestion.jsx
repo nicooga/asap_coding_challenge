@@ -46,15 +46,16 @@ const CaptionTop = styled.div`
 
 const CaptionBottom = styled.div``
 
-const Suggestion = forwardRef(({ checked, focused: forceFocused, onChecked, country, subcountry, name }, ref) => {
+const Suggestion = forwardRef(({ checked, focused: forceFocused, onClick, onMouseDown, country, subcountry, name }, ref) => {
   const [focused, setFocused] = useState(false)
 
   return (
     <Root
       ref={ref}
-      onClick={onChecked}
+      onClick={onClick}
       onMouseEnter={_ => setFocused(true)}
       onMouseLeave={_ => setFocused(false)}
+      onMouseDown={onMouseDown}
       focused={forceFocused || focused}
     >
       <IconWrapper>
@@ -71,7 +72,8 @@ const Suggestion = forwardRef(({ checked, focused: forceFocused, onChecked, coun
 Suggestion.propTypes = {
   checked: PropTypes.bool,
   focused: PropTypes.bool,
-  onChecked: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
+  onMouseDown: PropTypes.func.isRequired,
   country: PropTypes.string.isRequired,
   subcountry: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired
