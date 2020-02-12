@@ -1,7 +1,7 @@
 {
-  "name": "nicolasoga.com.ar",
+  "name": "react_typeahead_select",
   "version": "1.0.0",
-  "description": "My personal site",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --config ./webpack.config.js",
