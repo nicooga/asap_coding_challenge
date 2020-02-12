@@ -31,7 +31,7 @@ const App = _props => (
         <br />
         I know how to do that, but in real life we would most likely use a 3rd party component and it's not one of our biggest concerns anyway.
         <br />
-        This thing has a couple UX problems that I will solve in the next proposal:
+        This thing has a lot UX problems that I will solve in the next proposal. These are a few of them:
       </p>
 
       <ul>
